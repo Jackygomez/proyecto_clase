@@ -1,62 +1,70 @@
-import 'package:actividadclase/home.dart';
 import 'package:flutter/material.dart';
+import 'package:actividadclase/services/firebase_service.dart';
+import 'package:actividadclase/home/home.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MaterialApp(
+    title: 'login',
+    home: FirstRoute(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
-    );
-  }
-}
+class FirstRoute extends StatelessWidget {
+  const FirstRoute({super.key});
 
-class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text("home"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextButton(
+        body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(
+            child: FutureBuilder(
+          future: FirebaseService.firebaseIni(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        await FirebaseService.signInWithGoogle();
+                      },
+                      child: Text("Iniciar con Google"))
+                ],
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        )),
+        Center(
+          child: ElevatedButton(
+            child: const Text('Iniciar con twitter'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
-            child: Text('Iniciar con Google'),
           ),
-          TextButton(
+        ),
+        Center(
+          child: ElevatedButton(
+            child: const Text('Iniciar con Facebook'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
-            child: Text('Facebook'),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Home()),
-              );
-            },
-            child: Text('Twitter'),
-          ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ));
   }
 }
